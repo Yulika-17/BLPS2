@@ -1,0 +1,2 @@
+INSERT INTO inn_repository(id) VALUES(123456789012);
+INSERT INTO inn_repository(id) VALUES(234567890123);
