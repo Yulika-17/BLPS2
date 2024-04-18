@@ -1,1 +1,1 @@
-![Lab2 (3)](https://github.com/Yulika-17/BLPS2/assets/72934505/18b9d974-2132-4fda-a772-5f9fb6ed8a72)
+![Lab2 (4)](https://github.com/Yulika-17/BLPS2/assets/72934505/9f7e4b17-e804-4472-b56b-a9e2c9c928ac)
