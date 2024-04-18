@@ -1,6 +1,7 @@
 package com.nullnumber1.lab1.service;
 
 import com.nullnumber1.lab1.exception.PaymentIsNotProcessedException;
+import com.nullnumber1.lab1.exception.not_found.InnDoesntExistException;
 import com.nullnumber1.lab1.exception.not_found.PaymentNotFoundException;
 import com.nullnumber1.lab1.exception.not_found.UserNotFoundException;
 import com.nullnumber1.lab1.model.*;
@@ -109,13 +110,18 @@ public class PaymentService {
         payment.setForSelf(forSelf);
         payment.setStatus(PaymentStatus.FILLING_PAYER.name());
 
-        paymentRepository.save(payment);
-
         if (forSelf) {
-            log.info("Person with ID " + INN + " is paying for himself");
-            return checkInnAndGenerateDocument(payment);
+            if (innRepository.existsById(payment.getPayer().getINN())) {
+                log.info("INN" + payment.getPayer().getINN() + " exists in DB");
+                paymentRepository.save(payment);
+                return generatePaymentDocument(payment);
+            } else throw new InnDoesntExistException(payment.getPayer().getINN());
         } else {
-            return null;
+            if (innRepository.existsById(payment.getPayer().getINN())) {
+                log.info("INN" + payment.getPayer().getINN() + " exists in DB");
+                paymentRepository.save(payment);
+                return null;
+            } else throw new InnDoesntExistException(payment.getPayer().getINN());
         }
     }
 
@@ -129,26 +135,11 @@ public class PaymentService {
         payment.setPayee(payee);
         payment.setStatus(PaymentStatus.FILLING_PAYEE.name());
 
-        paymentRepository.save(payment);
-
-        return checkInnAndGenerateDocument(payment);
-    }
-
-
-    private PaymentDocument checkInnAndGenerateDocument(Payment payment) {
-        log.info("Checking INN for payment: " + payment.getId() + " ...");
-        if (payment.getForSelf()) {
-            if (innRepository.existsById(payment.getPayer().getINN())) {
-                log.info("INN" + payment.getPayer().getINN() + " exists in DB");
-                return generatePaymentDocument(payment);
-            }
-        } else {
-            if (innRepository.existsById(payment.getPayee().getINN())) {
-                log.info("INN" + payment.getPayee().getINN() + " exists in DB");
-                return generatePaymentDocument(payment);
-            }
-        }
-        return null;
+        if (innRepository.existsById(payment.getPayee().getINN()) && innRepository.existsById(payment.getPayer().getINN())) {
+            log.info("INN" + payment.getPayee().getINN() + " exists in DB");
+            paymentRepository.save(payment);
+            return generatePaymentDocument(payment);
+        } else throw new InnDoesntExistException(payment.getPayer().getINN());
     }
 
     private PaymentDocument generatePaymentDocument(Payment payment) {
