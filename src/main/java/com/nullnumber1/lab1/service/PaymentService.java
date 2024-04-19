@@ -110,16 +110,15 @@ public class PaymentService {
         payment.setForSelf(forSelf);
         payment.setStatus(PaymentStatus.FILLING_PAYER.name());
 
+        paymentRepository.save(payment);
         if (forSelf) {
             if (innRepository.existsById(payment.getPayer().getINN())) {
                 log.info("INN" + payment.getPayer().getINN() + " exists in DB");
-                paymentRepository.save(payment);
                 return generatePaymentDocument(payment);
             } else throw new InnDoesntExistException(payment.getPayer().getINN());
         } else {
             if (innRepository.existsById(payment.getPayer().getINN())) {
                 log.info("INN" + payment.getPayer().getINN() + " exists in DB");
-                paymentRepository.save(payment);
                 return null;
             } else throw new InnDoesntExistException(payment.getPayer().getINN());
         }
@@ -135,9 +134,10 @@ public class PaymentService {
         payment.setPayee(payee);
         payment.setStatus(PaymentStatus.FILLING_PAYEE.name());
 
-        if (innRepository.existsById(payment.getPayee().getINN()) && innRepository.existsById(payment.getPayer().getINN())) {
+        paymentRepository.save(payment);
+
+        if (innRepository.existsById(payment.getPayee().getINN())) {
             log.info("INN" + payment.getPayee().getINN() + " exists in DB");
-            paymentRepository.save(payment);
             return generatePaymentDocument(payment);
         } else throw new InnDoesntExistException(payment.getPayer().getINN());
     }
