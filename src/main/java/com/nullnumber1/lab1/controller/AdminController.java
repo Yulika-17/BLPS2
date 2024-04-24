@@ -1,9 +1,9 @@
 package com.nullnumber1.lab1.controller;
 
-import com.nullnumber1.lab1.exception.PaymentIsNotProcessedException;
 import com.nullnumber1.lab1.model.PaymentDocument;
 import com.nullnumber1.lab1.util.enums.PaymentStatus;
 import com.nullnumber1.lab1.service.PaymentService;
+import com.nullnumber1.lab1.util.enums.RoleEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +27,7 @@ public class AdminController {
         this.paymentService = paymentService;
     }
 
+    @PreAuthorize("hasAuthority('APPROVE_OR_REJECT_PAYMENT')")
     @PostMapping("/reviewPayment/{paymentId}")
     @Operation(description = "Review payment", responses = {
             @ApiResponse(responseCode = "200", description = "Payment was successfully reviewed"),
@@ -39,7 +40,7 @@ public class AdminController {
         PaymentStatus status = paymentService.reviewPayment(paymentId, decision);
         return ResponseEntity.ok(status);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PAYMENT_DOCUMENT')")
     @GetMapping("/paymentDocument/{paymentId}")
     @Operation(description = "Get payment document", responses = {
             @ApiResponse(responseCode = "200", description = "Payment document was successfully received"),
@@ -51,5 +52,19 @@ public class AdminController {
     public ResponseEntity<PaymentDocument> getPaymentDocument(@PathVariable Long paymentId) {
         PaymentDocument paymentDocument = paymentService.getPaymentDocument(paymentId);
         return new ResponseEntity<>(paymentDocument, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('GIVE_NEW_ROLE')")
+    @PostMapping("/newRole")
+    @Operation(description = "Get payment document", responses = {
+            @ApiResponse(responseCode = "200", description = "Payment document was successfully received"),
+            @ApiResponse(responseCode = "400", description = "Payment document was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "401", description = "User is not authed"),
+            @ApiResponse(responseCode = "403", description = "User do not have permission for this func")
+    })
+    public ResponseEntity<?> newRole(@RequestParam String userName) {
+        paymentService.addRoleToUser(userName, RoleEnum.ADMIN);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

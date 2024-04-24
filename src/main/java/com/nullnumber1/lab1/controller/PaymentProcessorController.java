@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +27,7 @@ public class PaymentProcessorController {
         this.paymentService = paymentService;
     }
 
+    @PreAuthorize("hasAuthority('PROCESS_PAYMENT')")
     @PostMapping("/process")
     @Operation(description = "Process payment", responses = {
             @ApiResponse(responseCode = "200", description = "Payment was successfully processed"),
@@ -34,7 +37,9 @@ public class PaymentProcessorController {
     public ResponseEntity<String> processPayment(
             @PathVariable(value = "paymentId") Long paymentId,
             @RequestParam(value = "payment_method") String paymentMethod) {
-
+        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         boolean paymentProcessed = paymentService.processPayment(paymentId, paymentMethod);
         if (paymentProcessed) {
             return ResponseEntity.ok("Payment processed successfully");

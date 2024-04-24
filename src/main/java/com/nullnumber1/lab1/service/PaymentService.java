@@ -9,14 +9,13 @@ import com.nullnumber1.lab1.repository.InnRepository;
 import com.nullnumber1.lab1.repository.PaymentRepository;
 import com.nullnumber1.lab1.repository.UserRepository;
 import com.nullnumber1.lab1.util.enums.PaymentStatus;
+import com.nullnumber1.lab1.util.enums.RoleEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -211,4 +210,24 @@ public class PaymentService {
 
         return paymentProcessed;
     }
+
+    // Метод для добавления роли пользователю
+    public void addRoleToUser(String username, RoleEnum role) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.getRoles().add(role);
+            userRepository.save(user);
+        } else {
+            throw new UserNotFoundException(username);
+        }
+    }
+
+    public boolean isCurrentUserPaymentCreator(Long paymentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+        return payment.getUser().getId().equals(user.getId());
+    }
+
 }

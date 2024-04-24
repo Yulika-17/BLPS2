@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +33,7 @@ public class PayerController {
         this.pdfGenerationService = pdfGenerationService;
     }
 
+    @PreAuthorize("hasAuthority('FILL_PAYER_INFO')")
     @PostMapping("/payer")
     @Operation(description = "Fill the payer information", responses = {
             @ApiResponse(responseCode = "200", description = "Payer information was successfully filled"),
@@ -45,7 +47,9 @@ public class PayerController {
             @RequestParam(value = "INN") Long INN,
             @RequestParam(value = "for_self") Boolean forSelf) {
 
-
+        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         log.debug("updatePayer: paymentId={}, name={}, INN={}, forSelf={}", paymentId, name, INN, forSelf);
         PaymentDocument paymentDocument = paymentService.updatePayer(paymentId, name, INN, forSelf);
         if (paymentDocument != null) {

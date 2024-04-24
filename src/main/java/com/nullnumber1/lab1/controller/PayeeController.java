@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +33,7 @@ public class PayeeController {
         this.pdfGenerationService = pdfGenerationService;
     }
 
+    @PreAuthorize("hasAuthority('FILL_PAYEE_INFO')")
     @PostMapping("/payee")
     @Operation(description = "Fill the organization payee", responses = {
             @ApiResponse(responseCode = "200", description = "Payee was successfully filled"),
@@ -44,6 +46,9 @@ public class PayeeController {
             @RequestParam(value = "name") String name,
             @RequestParam(value = "INN") Long INN
     ) {
+        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         PaymentDocument paymentDocument = paymentService.updatePayee(paymentId, name, INN);
         if (paymentDocument != null) {
             byte[] pdf = pdfGenerationService.generatePdf(paymentDocument);

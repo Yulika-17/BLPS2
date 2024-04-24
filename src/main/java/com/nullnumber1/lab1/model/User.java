@@ -1,6 +1,6 @@
 package com.nullnumber1.lab1.model;
 
-import com.nullnumber1.lab1.util.enums.RoleType;
+import com.nullnumber1.lab1.util.enums.RoleEnum;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,7 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -25,13 +26,21 @@ public class User implements UserDetails {
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
     @Enumerated(EnumType.STRING)
-    private RoleType role;
+    @Column(name = "role")
+    private Set<RoleEnum> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return roles.stream()
+                .flatMap(role -> role.getAuthorities().stream())
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                .collect(Collectors.toList());
     }
 
     @Override

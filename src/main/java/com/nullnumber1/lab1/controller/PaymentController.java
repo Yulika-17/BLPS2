@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    @PreAuthorize("hasAuthority('CREATE_PAYMENT')")
     @PostMapping("/init")
     @Operation(description = "Create payment", responses = {
             @ApiResponse(responseCode = "200", description = "Payment was successfully created"),
@@ -47,8 +49,7 @@ public class PaymentController {
         }
         return ResponseEntity.ok(paymentId);
     }
-
-
+    @PreAuthorize("hasAuthority('VIEW_PAYMENT_STATUS')")
     @GetMapping("/{paymentId}")
     @Operation(description = "Get payment status", responses = {
             @ApiResponse(responseCode = "200", description = "Payment status was successfully received"),

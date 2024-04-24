@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +28,7 @@ public class PaymentTypeController {
         this.paymentService = paymentService;
     }
 
+    @PreAuthorize("hasAuthority('FILL_PAYMENT_TYPE_AMOUNT')")
     @PostMapping("/type")
     @Operation(description = "Fill the payment type", responses = {
             @ApiResponse(responseCode = "200", description = "Payment type was successfully filled"),
@@ -37,6 +40,9 @@ public class PaymentTypeController {
             @RequestParam(value = "type") String type,
             @RequestParam(value = "amount") Double amount
     ) {
+        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         paymentService.updatePaymentType(paymentId, type, amount);
         return ResponseEntity.ok().build();
     }

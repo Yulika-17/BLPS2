@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +28,8 @@ public class OKTMOController {
         this.paymentService = paymentService;
     }
 
+
+    @PreAuthorize("hasAuthority('FILL_OKTMO')")
     @PostMapping("/oktmo")
     @Operation(description = "Fill the organization OKTMO code", responses = {
             @ApiResponse(responseCode = "200", description = "OKTMO code was successfully filled"),
@@ -36,6 +40,9 @@ public class OKTMOController {
             @PathVariable(value = "paymentId") Long paymentId,
             @RequestParam(value = "code") String code
     ) {
+        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         paymentService.updateOKTMO(paymentId, code);
         return ResponseEntity.ok().build();
     }
