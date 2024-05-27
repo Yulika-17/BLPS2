@@ -25,7 +25,7 @@ spring:
     port: 465
     protocol: smtps
     debug: true
-    password: wigmizvzbdnbajdr
+    password:
   kafka:
     consumer:
       group-id: consumergroup${random.value}
