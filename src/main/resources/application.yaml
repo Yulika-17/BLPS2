@@ -19,6 +19,34 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mail:
+    host: smtp.yandex.ru
+    username: yulikamaltseva@yandex.ru
+    port: 465
+    protocol: smtps
+    debug: true
+    password: wigmizvzbdnbajdr
+  kafka:
+    consumer:
+      group-id: consumergroup${random.value}
 
+spring.kafka.bootstrap-servers: localhost:9092
+
+
+# Настройки для профиля "master"
+---
+spring:
+  config:
+    activate:
+      on-profile: master
 server:
-  port: 9443
+  port: 17502
+
+# Настройки для профиля "slave"
+---
+spring:
+  config:
+    activate:
+      on-profile: slave
+server:
+  port: 17503

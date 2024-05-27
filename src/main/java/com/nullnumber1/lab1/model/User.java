@@ -26,6 +26,8 @@ public class User implements UserDetails {
     private String username;
     @Column(name = "password")
     private String password;
+    @Column(name = "email")
+    private String email;
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

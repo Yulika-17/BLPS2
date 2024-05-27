@@ -1,5 +1,6 @@
 package com.nullnumber1.lab1.service;
 
+import com.nullnumber1.lab1.service.kafka.ProducerService;
 import com.nullnumber1.lab1.exception.PaymentIsNotProcessedException;
 import com.nullnumber1.lab1.exception.not_found.InnDoesntExistException;
 import com.nullnumber1.lab1.exception.not_found.PaymentNotFoundException;
@@ -30,11 +31,14 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final InnRepository innRepository;
 
+    private final ProducerService producerService;
+
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, InnRepository innRepository) {
+    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, InnRepository innRepository, ProducerService producerService) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.innRepository = innRepository;
+        this.producerService = producerService;
     }
 
     public Long createPayment(Long userId) {
@@ -166,6 +170,9 @@ public class PaymentService {
         }
     }
 
+    public List<Payment> getPayments() {
+        return paymentRepository.findAllByStatus("PROCESSED");
+    }
     @Transactional
     public PaymentStatus reviewPayment(Long paymentId, Boolean decision) {
         Payment payment = paymentRepository.findById(paymentId)
@@ -177,10 +184,13 @@ public class PaymentService {
                 PaymentDocument paymentDocument = generatePaymentDocument(payment);
                 payment.setPaymentDocument(paymentDocument);
                 paymentRepository.save(payment);
-
+                String userEmail = payment.getUser().getEmail();
+                producerService.send("mail-topic",userEmail);
                 return PaymentStatus.APPROVED;
             } else {
                 updatePaymentStatus(paymentId, PaymentStatus.FAILED);
+                String userEmail = payment.getUser().getEmail();
+                producerService.send("mail-topic", userEmail);
                 return PaymentStatus.FAILED;
             }
         } else {

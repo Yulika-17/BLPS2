@@ -85,3 +85,13 @@ create table if not exists s311685.inn_repository
 );
 
 alter table s311685.inn_repository owner to "s311685";
+
+drop table inn_repository, oktmo, payee, payer, payment, payment_document, payment_type, users CASCADE ;
+
+CREATE TABLE IF NOT EXISTS shedlock(
+                                       name VARCHAR(64) NOT NULL,
+                                       lock_until TIMESTAMP NOT NULL,
+                                       locked_at TIMESTAMP NOT NULL,
+                                       locked_by VARCHAR(255) NOT NULL,
+                                       PRIMARY KEY (name)
+);

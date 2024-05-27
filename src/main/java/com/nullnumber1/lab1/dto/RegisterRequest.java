@@ -1,11 +1,10 @@
 package com.nullnumber1.lab1.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
@@ -16,4 +15,7 @@ public class RegisterRequest {
     private String username;
     @NotBlank(message = "Password is required.")
     private String password;
+    @Email(message = "Невалидный mail")
+    @NotBlank(message = "Email is required.")
+    private String email;
 }

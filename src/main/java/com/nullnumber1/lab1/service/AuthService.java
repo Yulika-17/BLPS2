@@ -30,6 +30,7 @@ public class AuthService {
                 null,
                 request.getUsername(),
                 passwordEncoder.encode(request.getPassword()),
+                request.getEmail(),
                 Set.of(roleEnum)
         );
 

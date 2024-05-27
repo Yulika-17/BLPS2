@@ -60,6 +60,15 @@ dependencies {
      * Transactions
      */
     implementation("org.springframework.boot:spring-boot-starter-jta-bitronix:2.4.13")
+
+    implementation("org.springframework.boot:spring-boot-starter-mail:2.5.6")
+    implementation("org.springframework.kafka:spring-kafka")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
+    implementation("io.projectreactor:reactor-core:3.4.14")
+    testImplementation("io.projectreactor:reactor-test")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0") // Замените на актуальную версию
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0") // Замените на актуальную версию
+
 }
 
 tasks.withType<Test> {

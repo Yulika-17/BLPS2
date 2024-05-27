@@ -19,11 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsService userDetailsService;
+    private final PostgresUserDetailsService userDetailsService;
     private final MyBasicAuthenticationEntryPoint basicAuthenticationEntryPoint;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService,
+    public SecurityConfig(PostgresUserDetailsService userDetailsService,
                           MyBasicAuthenticationEntryPoint basicAuthenticationEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.basicAuthenticationEntryPoint = basicAuthenticationEntryPoint;

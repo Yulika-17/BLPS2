@@ -23,6 +23,6 @@ public class PostgresUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new User(user.getId(), user.getUsername(), user.getPassword(), user.getRoles());
+        return new User(user.getId(), user.getUsername(), user.getPassword(), user.getEmail(), user.getRoles());
     }
 }
