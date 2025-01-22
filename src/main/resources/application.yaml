@@ -8,13 +8,13 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/blps2
-    username: postgres
-    password: admin
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/blps_3}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -29,8 +29,7 @@ spring:
   kafka:
     consumer:
       group-id: consumergroup${random.value}
-
-spring.kafka.bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9092
 
 
 # Настройки для профиля "master"

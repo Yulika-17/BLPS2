@@ -24,7 +24,7 @@ public class AdminController {
   private final PaymentService paymentService;
 
   @PreAuthorize("hasAuthority('APPROVE_OR_REJECT_PAYMENT')")
-  @PostMapping("/reviewPayment/{paymentId}")
+  @PostMapping("/review-payment/{paymentId}")
   @Operation(
       description = "Review payment",
       responses = {
@@ -43,7 +43,7 @@ public class AdminController {
   }
 
   @PreAuthorize("hasAuthority('VIEW_PAYMENT_DOCUMENT')")
-  @GetMapping("/paymentDocument/{paymentId}")
+  @GetMapping("/payment-document/{paymentId}")
   @Operation(
       description = "Get payment document",
       responses = {
@@ -63,7 +63,7 @@ public class AdminController {
   }
 
   @PreAuthorize("hasAuthority('GIVE_NEW_ROLE')")
-  @PostMapping("/newRole")
+  @PostMapping("/new-role")
   @Operation(
       description = "Give new role",
       responses = {

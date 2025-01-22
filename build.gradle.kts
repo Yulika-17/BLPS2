@@ -68,7 +68,7 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0") // Замените на актуальную версию
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0") // Замените на актуальную версию
-
+    implementation ("org.flywaydb:flyway-core")
 }
 
 tasks.withType<Test> {
