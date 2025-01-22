@@ -2,7 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "2.7.10"
     id("io.spring.dependency-management") version "1.1.0"
-
+    id("com.diffplug.spotless") version "6.22.0"
 }
 
 group = "com.nullnumber1"
@@ -76,3 +76,11 @@ tasks.withType<Test> {
 }
 
 val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }
+
+spotless {
+    java {
+        target("**/src/**/*.java")
+        removeUnusedImports()
+        googleJavaFormat("1.15.0")
+    }
+}

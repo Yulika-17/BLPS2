@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JacksonConfig {
-    @Bean
-    ObjectMapper objectMapper() {
-        var mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
-    }
+  @Bean
+  ObjectMapper objectMapper() {
+    var mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+    mapper.registerModule(new JavaTimeModule());
+    return mapper;
+  }
 }

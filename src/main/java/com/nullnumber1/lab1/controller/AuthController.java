@@ -6,7 +6,7 @@ import com.nullnumber1.lab1.service.AuthService;
 import com.nullnumber1.lab1.util.enums.RoleEnum;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,29 +15,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
+@AllArgsConstructor
 @Tag(name = "Register management")
 public class AuthController {
-    private AuthService authService;
-    @Autowired
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+  private AuthService authService;
 
-    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> register(
-            @Validated @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(authService.register(request, RoleEnum.CUSTOMER));
-    }
+  @PostMapping(
+      path = "/register",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<User> register(@Validated @RequestBody RegisterRequest request) {
+    return ResponseEntity.ok(authService.register(request, RoleEnum.CUSTOMER));
+  }
 
-    @Hidden
-    @PreAuthorize("hasAuthority('REGISTER_OTHER_ADMINS')")
-    @PostMapping(path = "/admin/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> registerAdmin(
-            @Validated @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(authService.register(request, RoleEnum.ADMIN));
-    }
+  @Hidden
+  @PreAuthorize("hasAuthority('REGISTER_OTHER_ADMINS')")
+  @PostMapping(
+      path = "/admin/register",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<User> registerAdmin(@Validated @RequestBody RegisterRequest request) {
+    return ResponseEntity.ok(authService.register(request, RoleEnum.ADMIN));
+  }
 }

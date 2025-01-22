@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InnRepository extends JpaRepository<Inn, Long> {
-    boolean existsById(Long inn);
+  boolean existsById(Long inn);
 }

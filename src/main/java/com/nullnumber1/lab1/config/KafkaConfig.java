@@ -7,8 +7,8 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaConfig {
-    @Bean
-    public NewTopic topic1() {
-        return TopicBuilder.name("mail-topic").partitions(2).build();
-    }
+  @Bean
+  public NewTopic topic1() {
+    return TopicBuilder.name("mail-topic").partitions(2).build();
+  }
 }

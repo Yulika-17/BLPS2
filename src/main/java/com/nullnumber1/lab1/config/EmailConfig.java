@@ -1,4 +1,6 @@
 package com.nullnumber1.lab1.config;
+
+import java.util.Properties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,35 +9,33 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import java.util.Properties;
-
 @Configuration
 @Getter
 @Setter
 @ConfigurationProperties("spring.mail")
 public class EmailConfig {
-    private String host;
-    private String username;
-    private String password;
-    private int port;
-    private String protocol;
-    private String debug;
+  private String host;
+  private String username;
+  private String password;
+  private int port;
+  private String protocol;
+  private String debug;
 
-    @Bean
-    public JavaMailSender getMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+  @Bean
+  public JavaMailSender getMailSender() {
+    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost(host);
-        mailSender.setPort(port);
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
+    mailSender.setHost(host);
+    mailSender.setPort(port);
+    mailSender.setUsername(username);
+    mailSender.setPassword(password);
 
-        Properties properties = mailSender.getJavaMailProperties();
+    Properties properties = mailSender.getJavaMailProperties();
 
-        properties.setProperty("mail.transport.protocol", protocol);
-        properties.setProperty("mail.debug", debug);
-        properties.setProperty("mail.smtp.starttls.enable", "true");
+    properties.setProperty("mail.transport.protocol", protocol);
+    properties.setProperty("mail.debug", debug);
+    properties.setProperty("mail.smtp.starttls.enable", "true");
 
-        return mailSender;
-    }
+    return mailSender;
+  }
 }

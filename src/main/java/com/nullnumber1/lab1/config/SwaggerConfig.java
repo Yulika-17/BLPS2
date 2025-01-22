@@ -7,19 +7,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @OpenAPIDefinition(
-        info = @Info(
-                title = "BLPS Api",
-                description = "lab2 BLPS", version = "1.0.0",
-                contact = @Contact(
-                        name = "Yulia Maltseva",
-                        url = "https://vk.com/ulika17"
-                )
-        )
-)
-@SecurityScheme(
-        type = SecuritySchemeType.HTTP,
-        name = "basicAuth",
-        scheme = "basic")
-public class SwaggerConfig {
-
-}
+    info =
+        @Info(
+            title = "BLPS Api",
+            description = "lab2 BLPS",
+            version = "1.0.0",
+            contact = @Contact(name = "Yulia Maltseva", url = "https://vk.com/ulika17")))
+@SecurityScheme(type = SecuritySchemeType.HTTP, name = "basicAuth", scheme = "basic")
+public class SwaggerConfig {}

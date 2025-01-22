@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ProducerService {
-    private final KafkaTemplate<String, MailDTO> template;
+  private final KafkaTemplate<String, MailDTO> template;
 
-    public void send(String topicName, String userEmail) {
-        MailDTO mailDTO = new MailDTO(userEmail, null);
-        template.send(topicName, mailDTO);
-    }
+  public void send(String topicName, String userEmail) {
+    MailDTO mailDTO = new MailDTO(userEmail, null);
+    template.send(topicName, mailDTO);
+  }
 
-    public void send(String topicName, String userEmail, String message) {
-        MailDTO mailDTO = new MailDTO(userEmail, message);
-        template.send(topicName, mailDTO);
-    }
+  public void send(String topicName, String userEmail, String message) {
+    MailDTO mailDTO = new MailDTO(userEmail, message);
+    template.send(topicName, mailDTO);
+  }
 }

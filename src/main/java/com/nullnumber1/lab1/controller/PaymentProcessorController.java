@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,36 +15,34 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments/{paymentId}")
+@AllArgsConstructor
 @Slf4j
 @Tag(name = "Payment processing")
 @SecurityRequirement(name = "basicAuth")
 public class PaymentProcessorController {
 
-    private final PaymentService paymentService;
+  private final PaymentService paymentService;
 
-    @Autowired
-    public PaymentProcessorController(PaymentService paymentService) {
-        this.paymentService = paymentService;
+  @PreAuthorize("hasAuthority('PROCESS_PAYMENT')")
+  @PostMapping("/process")
+  @Operation(
+      description = "Process payment",
+      responses = {
+        @ApiResponse(responseCode = "200", description = "Payment was successfully processed"),
+        @ApiResponse(responseCode = "500", description = "Internal server error"),
+        @ApiResponse(responseCode = "401", description = "User is not authed")
+      })
+  public ResponseEntity<String> processPayment(
+      @PathVariable(value = "paymentId") Long paymentId,
+      @RequestParam(value = "payment_method") String paymentMethod) {
+    if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-
-    @PreAuthorize("hasAuthority('PROCESS_PAYMENT')")
-    @PostMapping("/process")
-    @Operation(description = "Process payment", responses = {
-            @ApiResponse(responseCode = "200", description = "Payment was successfully processed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error"),
-            @ApiResponse(responseCode = "401", description = "User is not authed")
-    })
-    public ResponseEntity<String> processPayment(
-            @PathVariable(value = "paymentId") Long paymentId,
-            @RequestParam(value = "payment_method") String paymentMethod) {
-        if (!paymentService.isCurrentUserPaymentCreator(paymentId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        boolean paymentProcessed = paymentService.processPayment(paymentId, paymentMethod);
-        if (paymentProcessed) {
-            return ResponseEntity.ok("Payment processed successfully");
-        } else {
-            throw new PaymentIsNotProcessedException(paymentId, "");
-        }
+    boolean paymentProcessed = paymentService.processPayment(paymentId, paymentMethod);
+    if (paymentProcessed) {
+      return ResponseEntity.ok("Payment processed successfully");
+    } else {
+      throw new PaymentIsNotProcessedException(paymentId, "");
     }
+  }
 }

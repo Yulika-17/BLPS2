@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailDTO {
-    private String userEmail;
-    private String message;
+  private String userEmail;
+  private String message;
 }
